@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
             documentSnapshot.data() as Map<String, dynamic>;
         print('Document data: ${data["activityCode"]}');
 
-        AlertDialog alerta = AlertDialog(
+        AlertDialog alerta = AlertDialog( 
           title: const Text('LECTURA DE ACTIVIDAD'),
           content: Column(
             children: [
