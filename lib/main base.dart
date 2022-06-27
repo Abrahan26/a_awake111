@@ -2,8 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
 class Myapp123 extends StatelessWidget {
   const Myapp123({Key? key}) : super(key: key);
 
@@ -88,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
             documentSnapshot.data() as Map<String, dynamic>;
         print('Document data: ${data["activityCode"]}');
 
-        AlertDialog alerta = AlertDialog( 
+        AlertDialog alerta = AlertDialog(
           title: const Text('LECTURA DE ACTIVIDAD'),
           content: Column(
             children: [
@@ -286,12 +284,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-
-       /*       StreamBuilder(
+              /*StreamBuilder(
                 stream:
-                    FirebaseFirestore.instance
-                    .collection("USERS")
-                    .snapshots(),
+                    FirebaseFirestore.instance.collection("USERS").snapshots(),
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   return ListView(
