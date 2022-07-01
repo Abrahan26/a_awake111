@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:newtotolist/HomePage.dart';
 
 class Myapp123 extends StatelessWidget {
   const Myapp123({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class Myapp123 extends StatelessWidget {
           primaryColor: Colors.blue,
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
               .copyWith(secondary: Colors.cyan)),
-      home: const MyHomePage(title: 'AWAKE'),
+          home: const MyHomePage(title: 'AWAKE'),
     );
   }
 }
@@ -144,6 +145,13 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+         leading: IconButton (
+                  icon: Icon(Icons.arrow_back, color: Colors.white,),
+                  onPressed: (){
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => HomePage())); 
+                },
+                  ),  
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
