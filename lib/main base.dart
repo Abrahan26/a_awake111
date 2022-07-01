@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
         .set(
           {
             "activityCode": activityCode, 
-            "activityName": activityName,
+            "nombre": activityName,
             "activityDescripcion": activityDescripcion,
             "activityFecha ": activityFecha
           },
@@ -119,7 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
     documentReference
         .update({
           "activityCode": activityCode,
-          "activityName ": activityName,
+          "nombre ": activityName,
           "activityDescripcion": activityDescripcion,
           "activityFecha": activityFecha
         })
@@ -285,22 +285,37 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              /*StreamBuilder(
-                stream:
-                    FirebaseFirestore.instance.collection("USERS").snapshots(),
+    StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                  .collection("Registro")
+                  .snapshots(),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  return ListView(
-                    children: snapshot.data!.docs.map((USERS) {
-                      return Center(
-                        child: ListTile(
-                          title: Text(USERS['activityName']),
-                        ),
+                  AsyncSnapshot<QuerySnapshot> snapshot)   {
+                    if (snapshot.hasData) {
+                      return Container(
+                        height: 100,
+                        child:ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index){
+                            DocumentSnapshot documentSnapshot =
+                              snapshot.data!.docs[index];
+                              return Row(
+                                children: [
+                                  SizedBox(width: 20,),
+                                  Text("${documentSnapshot["nombre"]}"),
+                                 
+                                ],
+                              );
+                          })
                       );
-                    }).toList(),
-                  );
-                },
-              )*/
+                    } else {
+                       return const Align(
+                        alignment: FractionalOffset.bottomCenter,
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                  }),
             ],
           ),
         ),

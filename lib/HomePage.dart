@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:newtotolist/Onboarding.dart';
 import 'package:newtotolist/main base.dart';
 import 'package:newtotolist/CheckList.dart';
 import 'package:newtotolist/NewTask.dart';
@@ -53,6 +54,13 @@ class _homePageState extends State<homePage> {
               AppBar(
                 backgroundColor: Color.fromARGB(255, 243, 182, 15),
                 elevation: 0,
+                leading: IconButton (
+                  icon: Icon(Icons.arrow_back, color: Colors.white,),
+                  onPressed: (){
+                  Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => Onboarding())); 
+                },
+                  ),                
                 title: Text(
                   "Aawake",
                   style: TextStyle(fontSize: 30),
@@ -199,45 +207,11 @@ class _homePageState extends State<homePage> {
                                 ],
                               ),
                             ),
-                            Container(
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.menu,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    "Menu",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  )
-                                ],
-                              ),
-                            ),
+                            
                             Container(
                               width: 80,
                             ),
-                            Container(
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    Icons.content_paste,
-                                    color: Colors.white,
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    "Nota",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 15),
-                                  )
-                                ],
-                              ),
-                            ),
+                           
                             Container(
                               child: Column(
                                 children: [

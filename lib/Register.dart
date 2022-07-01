@@ -75,7 +75,7 @@ ModeloUsuarios modeloUsuarios= ModeloUsuarios();
           ),
            onPressed: () {
             Navigator.push(
-                context, MaterialPageRoute(builder: (context) => LoginPage()));
+                context, MaterialPageRoute(builder: (context) => Onboarding()));
           },
         ),
       ),
