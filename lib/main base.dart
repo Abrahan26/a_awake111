@@ -29,7 +29,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String activityName = '',
+  String 
+      activityName = '',
       activityCode = '',
       activityDescripcion = '',
       activityFecha = '';
@@ -54,12 +55,12 @@ class _MyHomePageState extends State<MyHomePage> {
     print("created");
 
     DocumentReference documentReference =
-        FirebaseFirestore.instance.collection("USERS").doc(activityCode);
+        FirebaseFirestore.instance.collection("Registro").doc(activityCode);
 
     documentReference
         .set(
           {
-            "activityCode": activityCode,
+            "activityCode": activityCode, 
             "activityName": activityName,
             "activityDescripcion": activityDescripcion,
             "activityFecha ": activityFecha
@@ -76,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Lectura");
 
     FirebaseFirestore.instance
-        .collection('USERS')
+        .collection('Registro')
         .doc(activityCode)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
@@ -89,7 +90,7 @@ class _MyHomePageState extends State<MyHomePage> {
         AlertDialog alerta = AlertDialog(
           title: const Text('LECTURA DE ACTIVIDAD'),
           content: Column(
-            children: [
+            children: [ 
               Text('Nombre: ${data["activityName"]}'),
               Text('descripcion: ${data["activityDescripcion"]}'),
               Text('Codigo: ${data["activityCode"]}'),
@@ -113,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Modificación");
 
     DocumentReference documentReference =
-        FirebaseFirestore.instance.collection("USERS").doc(activityCode);
+        FirebaseFirestore.instance.collection("Registro").doc(activityCode);
 
     documentReference
         .update({
@@ -130,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Eliminar");
 
     DocumentReference documentReference =
-        FirebaseFirestore.instance.collection("USERS").doc(activityCode);
+        FirebaseFirestore.instance.collection("Registro").doc(activityCode);
 
     documentReference
         .delete()

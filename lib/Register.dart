@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:newtotolist/LoginPage.dart';
 import 'package:newtotolist/ModeloUsuarios.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:newtotolist/Onboarding.dart';
@@ -14,6 +15,11 @@ class register extends StatefulWidget {
 }
 
 class _registerState extends State<register> {
+
+ModeloUsuarios modeloUsuarios= ModeloUsuarios();
+
+
+
   final TextEditingController _emailcontroller = TextEditingController();
   final TextEditingController _nombrecontroller = TextEditingController();
   final TextEditingController _contrasenacontroller = TextEditingController();
@@ -43,16 +49,39 @@ class _registerState extends State<register> {
     modeloUsuarios.uid = user!.uid;
 
     await firebaseFirestore
-        .collection("USERS")
-        .doc(_nombrecontroller.text)
+        .collection("Usuarios")
+        .doc(user.uid)
         .set(modeloUsuarios.toMap());
     //
     openOnboardinPage();
   }
+  bool isHiddenPassword =true ;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 245, 225, 195),
+      appBar: AppBar(
+        backgroundColor: Color(0xfff96060),
+        elevation: 0,
+        title: Text(
+          "",
+          style: TextStyle(fontSize: 25),
+        ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+           onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginPage()));
+          },
+        ),
+      ),
+
+      
+
       body: Center(
         child: SafeArea(
             child: SingleChildScrollView(
@@ -68,9 +97,9 @@ class _registerState extends State<register> {
                   padding: EdgeInsets.symmetric(horizontal: 50),
                   child: TextField(
                     controller: _nombrecontroller,
-                    decoration: InputDecoration(labelText: 'Usuario'),
+                    decoration: InputDecoration(labelText: 'Usuario', prefixIcon:  Icon(Icons.account_circle)),
                   ),
-                ),
+                ),  
                 SizedBox(
                   height: 10,
                 ),
@@ -78,17 +107,25 @@ class _registerState extends State<register> {
                   padding: EdgeInsets.symmetric(horizontal: 50),
                   child: TextField(
                     controller: _emailcontroller,
-                    decoration: InputDecoration(labelText: 'Correo'),
+                    decoration: InputDecoration(labelText: 'Correo', prefixIcon: Icon(Icons.email) ),
                   ),
                 ),
                 SizedBox(
                   height: 10,
                 ),
+
+                
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 50),
                   child: TextField(
+                    obscureText: isHiddenPassword,
                     controller: _contrasenacontroller,
-                    decoration: InputDecoration(labelText: 'Contraseña'),
+                    decoration: InputDecoration(labelText: 'Contraseña',
+                                prefixIcon:  Icon(Icons.lock) ,
+                                suffixIcon: InkWell(
+                                  onTap:_togglePassword,
+                                  child: Icon(Icons.visibility,))),
+                    
                   ),
                 ),
                 RaisedButton(
@@ -107,7 +144,19 @@ class _registerState extends State<register> {
         )),
       ),
     );
+  }  void _togglePassword(){
+    if(isHiddenPassword == true){
+      isHiddenPassword =false;
+    } else {
+      isHiddenPassword = true;
+    }
+    setState(() {
+      
+    });
   }
+
+
+
 
   openOnboardinPage() {
     Navigator.pop(context, MaterialPageRoute(builder: (context) => HomePage()));

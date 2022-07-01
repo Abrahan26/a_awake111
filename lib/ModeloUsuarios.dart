@@ -21,6 +21,9 @@ class ModeloUsuarios {
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
+      'nombre': nombre,
+      'correo': correo,
+      'contrasena':contrasena,
     };
   }
 }
