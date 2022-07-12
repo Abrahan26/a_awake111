@@ -2,6 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:newtotolist/HomePage.dart';
+import 'package:newtotolist/pages/user_page.dart';
+import 'package:intl/intl.dart';
+import 'package:newtotolist/main base.dart';
+
 
 class Myapp123 extends StatelessWidget {
   const Myapp123({Key? key}) : super(key: key);
@@ -11,12 +15,16 @@ class Myapp123 extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        
           brightness: Brightness.light,
-          primaryColor: Colors.blue,
-          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
-              .copyWith(secondary: Colors.cyan)),
+          primaryColor: Color.fromARGB(255, 243, 182, 15),
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange)
+              .copyWith(secondary: Color.fromARGB(255, 243, 182, 15))),
           home: const MyHomePage(title: 'AWAKE'),
+          
+          
     );
+    
   }
 }
 
@@ -29,305 +37,106 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+
+
 class _MyHomePageState extends State<MyHomePage> {
-  String 
-      activityName = '',
-      activityCode = '',
-      activityDescripcion = '',
-      activityFecha = '';
 
-  getactivityName(name) {
-    activityName = name;
+  final controller = TextEditingController();
+
+
+@override
+Widget build(BuildContext context) => Scaffold(
+
+    appBar: AppBar(
+      title: Text('All users'),
+    ),  
+      body: FutureBuilder<User?>(
+        future: readUser(),
+        builder: (context, snapshot){
+          if (snapshot.hasData){
+            final user = snapshot.data;
+
+            return user == null
+              ? Center(child: Text('No User'))
+              : buildUser(user); 
+          } else { 
+            return Center(child: CircularProgressIndicator());
+          }
+
+        }),
+    floatingActionButton: FloatingActionButton(
+      child: Icon(Icons.add),
+      onPressed: (){
+        Navigator.of(context).push(MaterialPageRoute
+        (builder: (context) => user_page(),
+        ));
+      },
+    ),
+
+);
+
+Widget buildUser (User user) => ListTile (
+    leading: CircleAvatar( child: Text('${user.id}')),
+    title : Text(user.name),
+    subtitle: Text (user.description)
+    ,);
+
+
+
+Stream<List<User>>readUsers() => FirebaseFirestore.instance.collection('Registro')
+                                                            .snapshots()
+                                                            .map((snapshot) =>
+                                                              snapshot.docs.map((doc)=> User.fromJson (doc.data())) .toList());
+
+  Future<User?> readUser() async{
+    final docUser = FirebaseFirestore.instance.collection('Registro').doc('my-id');
+    final snapshot = await docUser.get();
+
+    if (snapshot.exists){
+      return User.fromJson(snapshot.data()!);
+    }
   }
 
-  getactivityCode(id) {
-    activityCode = id;
-  }
 
-  getactivityDescripcion(descripcion) {
-    activityDescripcion = descripcion;
-  }
+Future createdUser({required String name}) async {
+  final docUser = FirebaseFirestore.instance.collection('Registro').doc();
 
-  getactivityFecha(fecha) {
-    activityFecha = fecha;
-  }
+  final user = User(
+    id: docUser.id,
+    name: name,
+    age: 21,
+    description: 'tarea de inglés',
+  );
+  final json = user.toJson();
 
-  createData() {
-    print("created");
-
-    DocumentReference documentReference =
-        FirebaseFirestore.instance.collection("Registro").doc(activityCode);
-
-    documentReference
-        .set(
-          {
-            "activityCode": activityCode, 
-            "nombre": activityName,
-            "activityDescripcion": activityDescripcion,
-            "activityFecha ": activityFecha
-          },
-          SetOptions(merge: false),
-        )
-        .catchError((error) => print("Failed to merge data: $error"))
-        .whenComplete(() {
-          print("Actividad con nombre $activityName creado");
-        });
-  }
-
-  ReadData() {
-    print("Lectura");
-
-    FirebaseFirestore.instance
-        .collection('Registro')
-        .doc(activityCode)
-        .get()
-        .then((DocumentSnapshot documentSnapshot) {
-      if (documentSnapshot.exists) {
-        print('Document data: ${documentSnapshot.data()}');
-        Map<String, dynamic> data =
-            documentSnapshot.data() as Map<String, dynamic>;
-        print('Document data: ${data["activityCode"]}');
-
-        AlertDialog alerta = AlertDialog(
-          title: const Text('LECTURA DE ACTIVIDAD'),
-          content: Column(
-            children: [ 
-              Text('Nombre: ${data["activityName"]}'),
-              Text('descripcion: ${data["activityDescripcion"]}'),
-              Text('Codigo: ${data["activityCode"]}'),
-              Text('Fecha: ${data["activityFecha"]}'),
-            ],
-          ),
-        );
-        showDialog(context: context, builder: (BuildContext context) => alerta);
-      } else {
-        AlertDialog alerta2 = const AlertDialog(
-          title: Text('NO EXISTE DATOS'),
-          content: Text("VEREFIQUE SU INFORMACIÓN"),
-        );
-        showDialog(
-            context: context, builder: (BuildContext context) => alerta2);
-      }
-    });
-  }
-
-  UpdateData() {
-    print("Modificación");
-
-    DocumentReference documentReference =
-        FirebaseFirestore.instance.collection("Registro").doc(activityCode);
-
-    documentReference
-        .update({
-          "activityCode": activityCode,
-          "nombre ": activityName,
-          "activityDescripcion": activityDescripcion,
-          "activityFecha": activityFecha
-        })
-        .then((value) => print("User Updated"))
-        .catchError((error) => print("Failed to update user: $error"));
-  }
-
-  DeleteData() {
-    print("Eliminar");
-
-    DocumentReference documentReference =
-        FirebaseFirestore.instance.collection("Registro").doc(activityCode);
-
-    documentReference
-        .delete()
-        .then((value) => print("Actividad deleted"))
-        .catchError((error) => print("Failed to delete actividad: $error"));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-         leading: IconButton (
-                  icon: Icon(Icons.arrow_back, color: Colors.white,),
-                  onPressed: (){
-                  Navigator.push(context, 
-                    MaterialPageRoute(builder: (context) => HomePage())); 
-                },
-                  ),  
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Nombre",
-                    fillColor: Colors.white,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                    ),
-                  ),
-                  onChanged: (String name) {
-                    getactivityName(name);
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "Codigo de actividad",
-                    fillColor: Colors.white,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                    ),
-                  ),
-                  onChanged: (String id) {
-                    getactivityCode(id);
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "descripcion",
-                    fillColor: Colors.white,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                    ),
-                  ),
-                  onChanged: (String descripcion) {
-                    getactivityDescripcion(descripcion);
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "fecha",
-                    fillColor: Colors.white,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                    ),
-                  ),
-                  onChanged: (String fecha) {
-                    getactivityFecha(fecha);
-                  },
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      createData();
-                    },
-                    child: const Text("Create"),
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        textStyle: const TextStyle(color: Colors.white)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      ReadData();
-                    },
-                    child: const Text(
-                      "Read",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.yellow,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                      textStyle: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      UpdateData();
-                    },
-                    child: const Text("Update"),
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.orange,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        textStyle: const TextStyle(color: Colors.white)),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      DeleteData();
-                    },
-                    child: const Text("Delete"),
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16)),
-                        textStyle: const TextStyle(color: Colors.white)),
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  textDirection: TextDirection.ltr,
-                  children: const [
-                    Expanded(
-                        child: Text(
-                      "Nombre",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )),
-                    Expanded(
-                        child: Text("Código",
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    Expanded(
-                        child: Text("descripcion",
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    Expanded(
-                        child: Text("fecha",
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                  ],
-                ),
-              ),
-    StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                  .collection("Registro")
-                  .snapshots(),
-                builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot)   {
-                    if (snapshot.hasData) {
-                      return Container(
-                        height: 100,
-                        child:ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index){
-                            DocumentSnapshot documentSnapshot =
-                              snapshot.data!.docs[index];
-                              return Row(
-                                children: [
-                                  SizedBox(width: 20,),
-                                  Text("${documentSnapshot["nombre"]}"),
-                                 
-                                ],
-                              );
-                          })
-                      );
-                    } else {
-                       return const Align(
-                        alignment: FractionalOffset.bottomCenter,
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  }),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  await docUser.set(json);
 }
+}
+class User{
+  String id;
+  final String name;
+  final int age;
+  final String description;
+
+    User({
+      this.id = "",
+      required this.name,
+      required this.age,
+      required this.description,
+    });
+
+    Map<String, dynamic> toJson() => {
+      "id": id,
+      "name": name,
+      "age": age,
+      "description": description,
+    };
+
+    static User fromJson(Map<String, dynamic>json) => User (
+      id: json ['id'],
+      name: json['name'],
+      age: json['age'],
+      description: json['description'],
+    );
+}
+
